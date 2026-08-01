@@ -1,0 +1,70 @@
+import React from 'react';
+
+interface StatusBadgeProps {
+  status: string;
+  type?: 'vehicle' | 'followup' | 'priority' | 'role';
+}
+
+export const StatusBadge: React.FC<StatusBadgeProps> = ({ status, type = 'vehicle' }) => {
+  let badgeStyles = 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700';
+
+  if (type === 'vehicle') {
+    switch (status) {
+      case 'Available':
+        badgeStyles = 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+        break;
+      case 'Booked':
+        badgeStyles = 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+        break;
+      case 'Sold':
+        badgeStyles = 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800';
+        break;
+    }
+  } else if (type === 'followup') {
+    switch (status) {
+      case 'Pending':
+        badgeStyles = 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800';
+        break;
+      case 'Completed':
+        badgeStyles = 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800';
+        break;
+      case 'Missed':
+        badgeStyles = 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800';
+        break;
+      case 'Cancelled':
+        badgeStyles = 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700';
+        break;
+    }
+  } else if (type === 'priority') {
+    switch (status) {
+      case 'High':
+        badgeStyles = 'bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border-rose-200 dark:border-rose-800';
+        break;
+      case 'Medium':
+        badgeStyles = 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800';
+        break;
+      case 'Low':
+        badgeStyles = 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-700';
+        break;
+    }
+  } else if (type === 'role') {
+    switch (status) {
+      case 'Admin':
+        badgeStyles = 'bg-purple-50 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border-purple-200 dark:border-purple-800';
+        break;
+      case 'Manager':
+        badgeStyles = 'bg-sky-50 dark:bg-sky-950/60 text-sky-700 dark:text-sky-300 border-sky-200 dark:border-sky-800';
+        break;
+      case 'Sales Executive':
+        badgeStyles = 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-700 dark:text-indigo-300 border-indigo-200 dark:border-indigo-800';
+        break;
+    }
+  }
+
+  return (
+    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold border ${badgeStyles}`}>
+      <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5 opacity-80" />
+      {status}
+    </span>
+  );
+};
