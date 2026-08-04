@@ -28,7 +28,7 @@ export const MobileBottomNav: React.FC = () => {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-sky-100 px-2 py-1.5 shadow-2xl">
+    <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-sky-100 px-2 py-1.5 shadow-2xl md:hidden">
       <div className="flex items-center justify-around max-w-md mx-auto">
         {tabs.map(t => {
           const Icon = t.icon;

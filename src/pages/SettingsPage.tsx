@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { useData } from '../context/DataContext';
-import { Settings, Save, RotateCcw } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
+import { Settings, Save, RotateCcw, LogOut } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 export const SettingsPage: React.FC = () => {
   const { settings, updateSettings, resetAllData } = useData();
+  const { logout } = useAuth();
 
   const [formData, setFormData] = useState({
     name: settings.name,
@@ -101,6 +103,25 @@ export const SettingsPage: React.FC = () => {
             </button>
           </div>
         </form>
+      </div>
+
+      {/* Logout Card */}
+      <div className="bg-white dark:bg-slate-900 rounded-3xl p-5 border border-sky-100 dark:border-slate-800 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 animate-fade-in">
+        <div>
+          <h3 className="text-sm font-extrabold text-slate-900 dark:text-white">Active Session</h3>
+          <p className="text-[11px] text-slate-500 mt-0.5">Logout from current showroom representative account safely.</p>
+        </div>
+
+        <button
+          type="button"
+          onClick={() => {
+            logout();
+            toast.success('Successfully logged out!');
+          }}
+          className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900 text-rose-700 dark:text-rose-300 font-bold text-xs flex items-center justify-center border border-rose-200 dark:border-rose-800 transition-colors shadow-xs"
+        >
+          <LogOut className="w-4 h-4 mr-1.5" /> Log Out
+        </button>
       </div>
     </div>
   );
