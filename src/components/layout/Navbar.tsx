@@ -34,14 +34,14 @@ export const Navbar: React.FC = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-sky-100 px-4 md:px-6 py-3 flex items-center justify-between shadow-xs">
+      <header className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-sky-100 px-4 md:px-6 py-2 flex items-center justify-between shadow-xs">
         {/* Left Global Search Trigger */}
         <div className="flex items-center space-x-3">
           <button
             onClick={() => setIsSearchOpen(true)}
-            className="flex items-center px-3.5 py-2 rounded-xl text-xs sm:text-sm glass-input text-slate-500 hover:text-sky-700 hover:border-sky-300 transition-all w-48 sm:w-64 md:w-80 group"
+            className="flex items-center px-3 py-1.5 rounded-lg text-xs sm:text-sm glass-input text-slate-500 hover:text-sky-700 hover:border-sky-300 transition-all w-40 sm:w-56 md:w-72 group"
           >
-            <Search className="w-4 h-4 mr-2 text-sky-500 group-hover:text-sky-600 transition-colors shrink-0" />
+            <Search className="w-3.5 h-3.5 mr-2 text-sky-500 group-hover:text-sky-600 transition-colors shrink-0" />
             <span className="truncate">Search bikes, clients...</span>
             <kbd className="ml-auto hidden sm:inline-flex items-center px-1.5 py-0.5 text-[10px] font-mono font-bold text-sky-700 bg-sky-100 rounded border border-sky-200">
               ⌘K
@@ -50,25 +50,25 @@ export const Navbar: React.FC = () => {
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center space-x-2.5">
+        <div className="flex items-center space-x-2">
           {/* Quick Add Bike Button */}
           <button
             onClick={() => navigate('/add-vehicle')}
-            className="flex items-center px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs transition-all shadow-md shadow-sky-500/20 active:scale-95"
+            className="flex items-center px-2.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-bold text-[11px] transition-all shadow-md shadow-sky-500/20 active:scale-95"
           >
-            <Plus className="w-4 h-4 mr-1" />
+            <Plus className="w-3.5 h-3.5 mr-1" />
             <span className="hidden sm:inline">Add Bike</span>
           </button>
 
           {/* Favorites Bookmark */}
           <button
             onClick={() => navigate('/vehicles?favorite=true')}
-            className="relative p-2.5 rounded-xl glass-input text-slate-600 hover:text-rose-500 transition-colors"
+            className="relative p-2 rounded-lg glass-input text-slate-600 hover:text-rose-500 transition-colors"
             title="Favorite Motorcycles"
           >
-            <Heart className="w-4 h-4" />
+            <Heart className="w-3.5 h-3.5" />
             {favorites.length > 0 && (
-              <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-rose-500 text-white text-[10px] font-bold flex items-center justify-center shadow">
+              <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center shadow">
                 {favorites.length}
               </span>
             )}
@@ -78,12 +78,12 @@ export const Navbar: React.FC = () => {
           <div className="relative">
             <button
               onClick={() => setShowNotifications(!showNotifications)}
-              className="relative p-2.5 rounded-xl glass-input text-slate-600 hover:text-sky-600 transition-colors"
+              className="relative p-2 rounded-lg glass-input text-slate-600 hover:text-sky-600 transition-colors"
               title="Notifications"
             >
-              <Bell className="w-4 h-4" />
+              <Bell className="w-3.5 h-3.5" />
               {pendingFollowups.length > 0 && (
-                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-amber-500 text-white text-[10px] font-bold flex items-center justify-center animate-pulse shadow">
+                <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-amber-500 text-white text-[9px] font-bold flex items-center justify-center animate-pulse shadow">
                   {pendingFollowups.length}
                 </span>
               )}
@@ -126,11 +126,11 @@ export const Navbar: React.FC = () => {
 
           {/* User Profile Avatar */}
           {user && (
-            <div className="flex items-center pl-1">
+            <div className="flex items-center pl-0.5">
               <img
                 src={user.photo}
                 alt={user.name}
-                className="w-8 h-8 rounded-xl object-cover ring-2 ring-sky-400 shadow-xs"
+                className="w-7 h-7 rounded-lg object-cover ring-2 ring-sky-400 shadow-xs"
               />
             </div>
           )}

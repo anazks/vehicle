@@ -129,20 +129,21 @@ export const CustomersPage: React.FC = () => {
             <tr className="bg-sky-100/70 border-b border-sky-200 text-sky-900 font-bold uppercase text-[11px] tracking-wider">
               <th className="py-3.5 px-4">Customer Name</th>
               <th className="py-3.5 px-4">Contact Details</th>
-              <th className="py-3.5 px-4">Budget & Interest</th>
-              <th className="py-3.5 px-4">Sales Executive</th>
-              <th className="py-3.5 px-4">Visit Date</th>
-              <th className="py-3.5 px-4 text-right">Actions</th>
+              <th className="hidden md:table-cell py-3.5 px-4">Budget & Interest</th>
+              <th className="hidden md:table-cell py-3.5 px-4">Sales Executive</th>
+              <th className="hidden md:table-cell py-3.5 px-4">Visit Date</th>
+              <th className="hidden md:table-cell py-3.5 px-4 text-right">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-sky-100 text-sky-950">
             {paginatedCustomers.map(c => (
-              <tr key={c.id} className="hover:bg-sky-50 transition-colors group">
+              <tr
+                key={c.id}
+                onClick={() => navigate(`/customers/${c.id}`)}
+                className="hover:bg-sky-50 transition-colors group cursor-pointer"
+              >
                 <td className="py-3.5 px-4">
-                  <span
-                    onClick={() => navigate(`/customers/${c.id}`)}
-                    className="font-bold text-sky-950 hover:text-sky-600 cursor-pointer transition-colors block"
-                  >
+                  <span className="font-bold text-sky-950 hover:text-sky-600 transition-colors block">
                     {c.name}
                   </span>
                   <span className="text-xs text-sky-700 line-clamp-1">{c.address}</span>
@@ -157,20 +158,20 @@ export const CustomersPage: React.FC = () => {
                   </div>
                 </td>
 
-                <td className="py-3.5 px-4 text-xs">
+                <td className="hidden md:table-cell py-3.5 px-4 text-xs">
                   <span className="font-extrabold text-emerald-700">₹{(c.budget / 100000).toFixed(1)} Lakh</span>
                   <span className="block text-sky-700 line-clamp-1">{c.interestedVehicle}</span>
                 </td>
 
-                <td className="py-3.5 px-4 text-xs font-semibold text-sky-900">
+                <td className="hidden md:table-cell py-3.5 px-4 text-xs font-semibold text-sky-900">
                   {c.salesExecutive}
                 </td>
 
-                <td className="py-3.5 px-4 text-xs font-mono text-sky-800">
+                <td className="hidden md:table-cell py-3.5 px-4 text-xs font-mono text-sky-800">
                   {c.visitDate}
                 </td>
 
-                <td className="py-3.5 px-4 text-right space-x-1">
+                <td className="hidden md:table-cell py-3.5 px-4 text-right space-x-1" onClick={e => e.stopPropagation()}>
                   <a
                     href={`https://wa.me/${c.whatsApp.replace(/[^0-9]/g, '')}`}
                     target="_blank"

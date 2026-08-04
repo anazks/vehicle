@@ -53,7 +53,7 @@ export const SettingsPage: React.FC = () => {
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-slate-700 dark:text-slate-300 font-semibold mb-1">Phone Number</label>
               <input
@@ -84,18 +84,18 @@ export const SettingsPage: React.FC = () => {
             />
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-sky-100 dark:border-slate-800">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-sky-100 dark:border-slate-800">
             <button
               type="button"
               onClick={handleResetData}
-              className="px-4 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900 text-rose-700 dark:text-rose-300 font-bold text-xs flex items-center border border-rose-200 dark:border-rose-800 transition-colors shadow-xs"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900 text-rose-700 dark:text-rose-300 font-bold text-xs flex items-center justify-center border border-rose-200 dark:border-rose-800 transition-colors shadow-xs"
             >
               <RotateCcw className="w-4 h-4 mr-1.5" /> Restore Factory Sample Data
             </button>
 
             <button
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center shadow-md shadow-sky-500/20"
+              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center justify-center shadow-md shadow-sky-500/20"
             >
               <Save className="w-4 h-4 mr-1.5" /> Save Showroom Settings
             </button>

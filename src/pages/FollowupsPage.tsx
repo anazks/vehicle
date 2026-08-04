@@ -74,81 +74,81 @@ export const FollowupsPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-sky-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-sky-100 shadow-sm animate-fade-in">
         <div>
-          <h1 className="text-2xl font-extrabold text-sky-950 tracking-tight flex items-center">
-            <CalendarClock className="w-7 h-7 mr-2.5 text-amber-600" /> Customer Follow-ups CRM
+          <h1 className="text-base font-extrabold text-sky-950 tracking-tight flex items-center">
+            <CalendarClock className="w-5 h-5 mr-2 text-amber-600" /> Customer Follow-ups CRM
           </h1>
-          <p className="text-xs text-sky-700 mt-1">Schedule and manage leads, bike test rides, and customer inquiries.</p>
+          <p className="hidden sm:block text-xs text-sky-700 mt-1">Schedule and manage leads, bike test rides, and customer inquiries.</p>
         </div>
 
         <button
           onClick={() => setIsAddOpen(true)}
-          className="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center shadow-md shadow-sky-500/20 shrink-0"
+          className="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-[11px] flex items-center justify-center shadow-md shadow-sky-500/20 shrink-0"
         >
-          <Plus className="w-4 h-4 mr-1.5" /> Schedule New Follow-up
+          <Plus className="w-3.5 h-3.5 mr-1" /> Schedule Follow-up
         </button>
       </div>
 
-      {/* Metric Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+      {/* Metric Cards Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div
           onClick={() => setActiveTab('today')}
-          className={`glass-card rounded-2xl p-5 border cursor-pointer transition-all bg-white ${
+          className={`glass-card rounded-xl p-3.5 border cursor-pointer transition-all bg-white ${
             activeTab === 'today' ? 'border-sky-500 ring-2 ring-sky-500/20' : 'border-sky-100'
           }`}
         >
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold uppercase text-sky-700">Today's Due</span>
-              <h3 className="text-3xl font-extrabold text-sky-950 mt-1">{todayCount}</h3>
+              <span className="text-[10px] md:text-xs font-bold uppercase text-sky-700">Today's Due</span>
+              <h3 className="text-xl md:text-3xl font-extrabold text-sky-950 mt-0.5">{todayCount}</h3>
             </div>
-            <Clock className="w-8 h-8 text-sky-600" />
+            <Clock className="w-6 h-6 md:w-8 md:h-8 text-sky-600 shrink-0 ml-1" />
           </div>
         </div>
 
         <div
           onClick={() => setActiveTab('upcoming')}
-          className={`glass-card rounded-2xl p-5 border cursor-pointer transition-all bg-white ${
+          className={`glass-card rounded-xl p-3.5 border cursor-pointer transition-all bg-white ${
             activeTab === 'upcoming' ? 'border-indigo-500 ring-2 ring-indigo-500/20' : 'border-sky-100'
           }`}
         >
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold uppercase text-indigo-700">Upcoming</span>
-              <h3 className="text-3xl font-extrabold text-sky-950 mt-1">{upcomingCount}</h3>
+              <span className="text-[10px] md:text-xs font-bold uppercase text-indigo-700">Upcoming</span>
+              <h3 className="text-xl md:text-3xl font-extrabold text-sky-950 mt-0.5">{upcomingCount}</h3>
             </div>
-            <CalendarClock className="w-8 h-8 text-indigo-600" />
+            <CalendarClock className="w-6 h-6 md:w-8 md:h-8 text-indigo-600 shrink-0 ml-1" />
           </div>
         </div>
 
         <div
           onClick={() => setActiveTab('overdue')}
-          className={`glass-card rounded-2xl p-5 border cursor-pointer transition-all bg-white ${
+          className={`glass-card rounded-xl p-3.5 border cursor-pointer transition-all bg-white ${
             activeTab === 'overdue' ? 'border-rose-500 ring-2 ring-rose-500/20' : 'border-sky-100'
           }`}
         >
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold uppercase text-rose-600">Overdue</span>
-              <h3 className="text-3xl font-extrabold text-sky-950 mt-1">{overdueCount}</h3>
+              <span className="text-[10px] md:text-xs font-bold uppercase text-rose-600">Overdue</span>
+              <h3 className="text-xl md:text-3xl font-extrabold text-sky-950 mt-0.5">{overdueCount}</h3>
             </div>
-            <AlertCircle className="w-8 h-8 text-rose-600" />
+            <AlertCircle className="w-6 h-6 md:w-8 md:h-8 text-rose-600 shrink-0 ml-1" />
           </div>
         </div>
 
         <div
           onClick={() => setActiveTab('completed')}
-          className={`glass-card rounded-2xl p-5 border cursor-pointer transition-all bg-white ${
+          className={`glass-card rounded-xl p-3.5 border cursor-pointer transition-all bg-white ${
             activeTab === 'completed' ? 'border-emerald-500 ring-2 ring-emerald-500/20' : 'border-sky-100'
           }`}
         >
           <div className="flex items-center justify-between">
             <div>
-              <span className="text-xs font-bold uppercase text-emerald-600">Completed</span>
-              <h3 className="text-3xl font-extrabold text-sky-950 mt-1">{completedCount}</h3>
+              <span className="text-[10px] md:text-xs font-bold uppercase text-emerald-600">Completed</span>
+              <h3 className="text-xl md:text-3xl font-extrabold text-sky-950 mt-0.5">{completedCount}</h3>
             </div>
-            <CheckCircle className="w-8 h-8 text-emerald-600" />
+            <CheckCircle className="w-6 h-6 md:w-8 md:h-8 text-emerald-600 shrink-0 ml-1" />
           </div>
         </div>
       </div>
