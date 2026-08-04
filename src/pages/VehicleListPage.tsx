@@ -144,175 +144,181 @@ export const VehicleListPage: React.FC = () => {
   return (
     <div className="space-y-6">
       {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-sky-100 shadow-sm">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-sky-100 shadow-sm">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight flex items-center">
-            <Car className="w-7 h-7 mr-2.5 text-sky-600" /> Pre-Owned Motorcycle Inventory ({filteredVehicles.length})
+          <h1 className="text-base font-extrabold text-slate-900 tracking-tight flex items-center">
+            <Car className="w-5 h-5 mr-2 text-sky-600" /> Inventory ({filteredVehicles.length})
           </h1>
-          <p className="text-xs text-slate-600 mt-1">Manage certified bikes, superbike stock, specs, and status.</p>
         </div>
 
-        <div className="flex items-center space-x-2.5 shrink-0">
+        <div className="flex items-center space-x-2 shrink-0">
           <button
             onClick={handleExportExcel}
-            className="px-3.5 py-2.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-xs flex items-center border border-sky-200 transition-all shadow-xs"
+            className="px-2.5 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-[11px] flex items-center border border-sky-200 transition-all shadow-xs"
           >
-            <Download className="w-4 h-4 mr-1.5" /> Export Excel
+            <Download className="w-3.5 h-3.5 mr-1" /> Export Excel
           </button>
 
           <button
             onClick={() => navigate('/add-vehicle')}
-            className="px-4 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center shadow-md shadow-sky-500/20 active:scale-95"
+            className="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-[11px] flex items-center shadow-md shadow-sky-500/20 active:scale-95 transition-all"
           >
-            <Plus className="w-4 h-4 mr-1.5" /> Add New Bike
+            <Plus className="w-3.5 h-3.5 mr-1" /> Add Bike
           </button>
         </div>
       </div>
 
-      {/* Filter & Control Bar */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white rounded-2xl p-4 border border-sky-100 shadow-xs">
-        <SearchBar
-          value={searchQuery}
-          onChange={(q) => {
-            setSearchQuery(q);
-            setCurrentPage(1);
-          }}
-          placeholder="Search by title, brand, reg number..."
-          className="w-full lg:w-72"
-        />
+      {/* Merged Filters & Content Card */}
+      <div className="bg-white rounded-2xl border border-sky-100 shadow-sm overflow-hidden transition-colors animate-fade-in">
+        {/* Filter & Control Bar */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 p-3 bg-sky-50/15 border-b border-sky-100">
+          <SearchBar
+            value={searchQuery}
+            onChange={(q) => {
+              setSearchQuery(q);
+              setCurrentPage(1);
+            }}
+            placeholder="Search by name, brand, reg..."
+            className="w-full lg:w-64"
+          />
 
-        <div className="flex flex-wrap items-center gap-2 text-xs">
-          {/* Brand Filter */}
-          <select
-            value={selectedBrand}
-            onChange={e => { setSelectedBrand(e.target.value); setCurrentPage(1); }}
-            className="glass-input rounded-xl px-3 py-2 text-slate-700 font-medium cursor-pointer"
-          >
-            {brandsList.map(b => (
-              <option key={b} value={b}>Brand: {b}</option>
-            ))}
-          </select>
-
-          {/* Fuel Filter */}
-          <select
-            value={selectedFuel}
-            onChange={e => { setSelectedFuel(e.target.value); setCurrentPage(1); }}
-            className="glass-input rounded-xl px-3 py-2 text-slate-700 font-medium cursor-pointer"
-          >
-            <option value="All">Fuel: All</option>
-            <option value="Petrol">Petrol</option>
-            <option value="Electric">Electric EV</option>
-            <option value="Hybrid">Hybrid</option>
-          </select>
-
-          {/* Status Filter */}
-          <select
-            value={selectedStatus}
-            onChange={e => { setSelectedStatus(e.target.value); setCurrentPage(1); }}
-            className="glass-input rounded-xl px-3 py-2 text-slate-700 font-medium cursor-pointer"
-          >
-            <option value="All">Status: All</option>
-            <option value="Available">Available</option>
-            <option value="Booked">Booked</option>
-            <option value="Sold">Sold</option>
-          </select>
-
-          {/* Branch Filter */}
-          <select
-            value={selectedBranch}
-            onChange={e => { setSelectedBranch(e.target.value); setCurrentPage(1); }}
-            className="glass-input rounded-xl px-3 py-2 text-slate-700 font-medium cursor-pointer"
-          >
-            <option value="All">Branch: All</option>
-            {branches.map(br => (
-              <option key={br.id} value={br.id}>{br.name}</option>
-            ))}
-          </select>
-
-          {/* Sort By */}
-          <select
-            value={sortBy}
-            onChange={e => setSortBy(e.target.value as any)}
-            className="glass-input rounded-xl px-3 py-2 text-slate-700 font-medium cursor-pointer"
-          >
-            <option value="year-desc">Sort: Newest Year</option>
-            <option value="price-asc">Sort: Price Low to High</option>
-            <option value="price-desc">Sort: Price High to Low</option>
-            <option value="km-asc">Sort: Lowest KM Driven</option>
-          </select>
-
-          {/* Toggle View Mode */}
-          <div className="flex bg-sky-50 rounded-xl p-1 border border-sky-100 ml-auto">
-            <button
-              onClick={() => setViewMode('table')}
-              className={`p-1.5 rounded-lg transition-colors ${
-                viewMode === 'table' ? 'bg-white text-sky-600 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-800'
-              }`}
-              title="Table View"
+          <div className="flex flex-wrap items-center gap-1.5 text-[11px]">
+            {/* Brand Filter */}
+            <select
+              value={selectedBrand}
+              onChange={e => { setSelectedBrand(e.target.value); setCurrentPage(1); }}
+              className="glass-input rounded-lg px-2 py-1.5 text-slate-700 font-bold cursor-pointer"
             >
-              <List className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => setViewMode('grid')}
-              className={`p-1.5 rounded-lg transition-colors ${
-                viewMode === 'grid' ? 'bg-white text-sky-600 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-800'
-              }`}
-              title="Grid View"
+              {brandsList.map(b => (
+                <option key={b} value={b}>Brand: {b}</option>
+              ))}
+            </select>
+
+            {/* Fuel Filter */}
+            <select
+              value={selectedFuel}
+              onChange={e => { setSelectedFuel(e.target.value); setCurrentPage(1); }}
+              className="glass-input rounded-lg px-2 py-1.5 text-slate-700 font-bold cursor-pointer"
             >
-              <Grid className="w-4 h-4" />
-            </button>
+              <option value="All">Fuel: All</option>
+              <option value="Petrol">Petrol</option>
+              <option value="Electric">Electric</option>
+              <option value="Hybrid">Hybrid</option>
+            </select>
+
+            {/* Status Filter */}
+            <select
+              value={selectedStatus}
+              onChange={e => { setSelectedStatus(e.target.value); setCurrentPage(1); }}
+              className="glass-input rounded-lg px-2 py-1.5 text-slate-700 font-bold cursor-pointer"
+            >
+              <option value="All">Status: All</option>
+              <option value="Available">Available</option>
+              <option value="Booked">Booked</option>
+              <option value="Sold">Sold</option>
+            </select>
+
+            {/* Branch Filter */}
+            <select
+              value={selectedBranch}
+              onChange={e => { setSelectedBranch(e.target.value); setCurrentPage(1); }}
+              className="glass-input rounded-lg px-2 py-1.5 text-slate-700 font-bold cursor-pointer"
+            >
+              <option value="All">Branch: All</option>
+              {branches.map(br => (
+                <option key={br.id} value={br.id}>{br.name.split(' ')[0]}</option>
+              ))}
+            </select>
+
+            {/* Sort By */}
+            <select
+              value={sortBy}
+              onChange={e => setSortBy(e.target.value as any)}
+              className="glass-input rounded-lg px-2 py-1.5 text-slate-700 font-bold cursor-pointer"
+            >
+              <option value="year-desc">Sort: Newest</option>
+              <option value="price-asc">Sort: Price ↑</option>
+              <option value="price-desc">Sort: Price ↓</option>
+              <option value="km-asc">Sort: KM Driven</option>
+            </select>
+
+            {/* Toggle View Mode */}
+            <div className="flex bg-sky-50 rounded-lg p-0.5 border border-sky-100 ml-auto lg:ml-0">
+              <button
+                type="button"
+                onClick={() => setViewMode('table')}
+                className={`p-1 rounded-md transition-colors ${
+                  viewMode === 'table' ? 'bg-white text-sky-600 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-800'
+                }`}
+                title="Table View"
+              >
+                <List className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setViewMode('grid')}
+                className={`p-1 rounded-md transition-colors ${
+                  viewMode === 'grid' ? 'bg-white text-sky-600 shadow-xs font-bold' : 'text-slate-500 hover:text-slate-800'
+                }`}
+                title="Grid View"
+              >
+                <Grid className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content Area */}
-      {paginatedVehicles.length === 0 ? (
-        <div className="p-12 text-center text-slate-500 bg-white rounded-3xl border border-sky-100">
-          No motorcycle listings match your filter criteria.
-        </div>
-      ) : viewMode === 'table' ? (
-        <VehicleTable
-          vehicles={paginatedVehicles}
-          onDelete={id => setDeleteTargetId(id)}
-          onOpenMarkSold={handleOpenMarkSold}
-        />
-      ) : (
-        /* Grid Card View */
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {paginatedVehicles.map(v => (
-            <div
-              key={v.id}
-              className="bg-white rounded-3xl overflow-hidden border border-sky-100 shadow-sm flex flex-col justify-between hover:shadow-lg transition-all"
-            >
-              <div className="relative aspect-video overflow-hidden">
-                <img src={v.coverImage} alt={v.name} className="w-full h-full object-cover" />
-                <button
-                  onClick={() => toggleCompare(v.id)}
-                  className={`absolute top-2 left-2 p-1.5 rounded-xl text-xs font-bold flex items-center ${
-                    comparedIds.includes(v.id) ? 'bg-sky-600 text-white' : 'bg-white/90 text-slate-700'
-                  }`}
+        {/* Content Body */}
+        {paginatedVehicles.length === 0 ? (
+          <div className="p-12 text-center text-slate-500 bg-white">
+            No motorcycle listings match your filter criteria.
+          </div>
+        ) : viewMode === 'table' ? (
+          <VehicleTable
+            vehicles={paginatedVehicles}
+            onDelete={id => setDeleteTargetId(id)}
+            onOpenMarkSold={handleOpenMarkSold}
+          />
+        ) : (
+          /* Grid Card View */
+          <div className="p-4 sm:p-6 bg-slate-50/10">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              {paginatedVehicles.map(v => (
+                <div
+                  key={v.id}
+                  className="bg-white rounded-3xl overflow-hidden border border-sky-100 shadow-sm flex flex-col justify-between hover:shadow-lg transition-all"
                 >
-                  <GitCompare className="w-3.5 h-3.5 mr-1" /> Compare
-                </button>
-              </div>
+                  <div className="relative aspect-video overflow-hidden">
+                    <img src={v.coverImage} alt={v.name} className="w-full h-full object-cover" />
+                    <button
+                      onClick={() => toggleCompare(v.id)}
+                      className={`absolute top-2 left-2 p-1.5 rounded-xl text-xs font-bold flex items-center ${
+                        comparedIds.includes(v.id) ? 'bg-sky-600 text-white' : 'bg-white/90 text-slate-700'
+                      }`}
+                    >
+                      <GitCompare className="w-3.5 h-3.5 mr-1" /> Compare
+                    </button>
+                  </div>
 
-              <div className="p-4 space-y-2">
-                <h3 className="font-extrabold text-slate-900 text-sm line-clamp-1">{v.name}</h3>
-                <p className="text-xs text-slate-500">{v.brand} • {v.year} • {v.fuel}</p>
-                <div className="flex items-center justify-between pt-2">
-                  <span className="text-base font-black text-sky-700">₹{v.offerPrice.toLocaleString('en-IN')}</span>
-                  <button
-                    onClick={() => navigate(`/vehicles/${v.id}`)}
-                    className="px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 font-bold text-xs hover:bg-sky-100"
-                  >
-                    View Specs
-                  </button>
+                  <div className="p-4 space-y-2">
+                    <h3 className="font-extrabold text-slate-900 text-sm line-clamp-1">{v.name}</h3>
+                    <p className="text-xs text-slate-500">{v.brand} • {v.year} • {v.fuel}</p>
+                    <div className="flex items-center justify-between pt-2">
+                      <span className="text-base font-black text-sky-700">₹{v.offerPrice.toLocaleString('en-IN')}</span>
+                      <button
+                        onClick={() => navigate(`/vehicles/${v.id}`)}
+                        className="px-3 py-1.5 rounded-xl bg-sky-50 text-sky-700 font-bold text-xs hover:bg-sky-100"
+                      >
+                        View Specs
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-      )}
+          </div>
+        )}
+      </div>
 
       {/* Pagination */}
       <Pagination

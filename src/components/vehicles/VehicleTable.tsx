@@ -2,7 +2,7 @@ import React from 'react';
 import { Vehicle } from '../../types';
 import { StatusBadge } from '../common/StatusBadge';
 import { useNavigate } from 'react-router-dom';
-import { Eye, Edit3, Trash2, Heart, Download } from 'lucide-react';
+import { Eye, Edit3, Trash2, Heart, Download, Check, X } from 'lucide-react';
 import { pdfService } from '../../services/pdfService';
 import { useData } from '../../context/DataContext';
 import { useAuth } from '../../context/AuthContext';
@@ -30,7 +30,7 @@ export const VehicleTable: React.FC<VehicleTableProps> = ({
   };
 
   return (
-    <div className="overflow-x-auto rounded-2xl bg-white border border-sky-100 shadow-sm transition-colors">
+    <div className="overflow-x-auto transition-colors">
       <table className="w-full text-left border-collapse text-sm">
         <thead>
           <tr className="bg-sky-100/70 border-b border-sky-200 text-sky-900 font-bold uppercase text-[11px] tracking-wider">
@@ -40,7 +40,7 @@ export const VehicleTable: React.FC<VehicleTableProps> = ({
             <th className="hidden md:table-cell py-3.5 px-4">Fuel & Trans</th>
             <th className="hidden md:table-cell py-3.5 px-4">KM & Owner</th>
             <th className="hidden md:table-cell py-3.5 px-4">Offer Price</th>
-            <th className="py-3.5 px-3 md:px-4 text-right">Action</th>
+            <th className="hidden md:table-cell py-3.5 px-4 text-right">Action</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-sky-100 text-sky-950">
@@ -84,8 +84,19 @@ export const VehicleTable: React.FC<VehicleTableProps> = ({
                 {/* Year & Status Badge (Visible on Mobile & Desktop) */}
                 <td className="py-3.5 px-3 md:px-4 text-xs">
                   <span className="font-bold text-sky-900 block">{v.year}</span>
-                  <div className="mt-0.5">
+                  <div className="mt-0.5 md:block hidden">
                     <StatusBadge status={v.status} />
+                  </div>
+                  <div className="mt-1 md:hidden block">
+                    {v.status === 'Available' ? (
+                      <span className="inline-flex items-center justify-center p-0.5 rounded-full bg-emerald-100 text-emerald-800" title="Available">
+                        <Check className="w-3 h-3 stroke-[3.5]" />
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center justify-center p-0.5 rounded-full bg-rose-100 text-rose-800" title={v.status}>
+                        <X className="w-3 h-3 stroke-[3.5]" />
+                      </span>
+                    )}
                   </div>
                 </td>
 
@@ -108,8 +119,8 @@ export const VehicleTable: React.FC<VehicleTableProps> = ({
                   ₹{v.offerPrice.toLocaleString('en-IN')}
                 </td>
 
-                {/* Prominent Mobile & Desktop View Button */}
-                <td className="py-3.5 px-3 md:px-4 text-right" onClick={e => e.stopPropagation()}>
+                {/* Prominent Desktop-Only View Button */}
+                <td className="hidden md:table-cell py-3.5 px-4 text-right" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-end space-x-1">
                     <button
                       onClick={() => navigate(`/vehicles/${v.id}`)}

@@ -194,43 +194,54 @@ export const VehicleDetailsPage: React.FC = () => {
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       {/* Navigation Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <button
           onClick={() => navigate('/vehicles')}
-          className="flex items-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-sky-700 dark:hover:text-sky-400 transition-colors"
+          className="flex items-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-sky-700 dark:hover:text-sky-400 transition-colors self-start"
         >
           <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Motorcycle Inventory
         </button>
 
-        <div className="flex items-center space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
           <button
             onClick={() => toggleFavorite(vehicle.id)}
             className={`p-2 rounded-xl border transition-colors ${
               isFav ? 'bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 border-rose-200 dark:border-rose-800' : 'glass-input text-slate-600 dark:text-slate-300'
             }`}
+            title="Favorite"
           >
             <Heart className={`w-4 h-4 ${isFav ? 'fill-current' : ''}`} />
           </button>
-          <button onClick={handleShare} className="p-2 rounded-xl glass-input text-slate-600 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400">
+          <button
+            onClick={handleShare}
+            className="p-2 rounded-xl glass-input text-slate-600 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400"
+            title="Share"
+          >
             <Share2 className="w-4 h-4" />
           </button>
           <button
             onClick={handleDownloadPDF}
-            className="px-3.5 py-2 rounded-xl glass-input hover:border-sky-300 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center"
+            className="p-2 sm:px-3.5 sm:py-2 rounded-xl glass-input hover:border-sky-300 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center"
+            title="Download PDF"
           >
-            <Download className="w-4 h-4 mr-1.5" /> Download PDF Spec Sheet
+            <Download className="w-4 h-4" />
+            <span className="hidden sm:inline ml-1.5">Download PDF</span>
           </button>
           <button
             onClick={() => setIsQRModalOpen(true)}
-            className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center shadow-md shadow-purple-500/20"
+            className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center shadow-md shadow-purple-500/20"
+            title="QR Pass"
           >
-            <QrCode className="w-4 h-4 mr-1.5" /> QR Pass
+            <QrCode className="w-4 h-4" />
+            <span className="hidden sm:inline ml-1.5">QR Pass</span>
           </button>
           <button
             onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)}
-            className="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center shadow-md shadow-sky-500/20"
+            className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center shadow-md shadow-sky-500/20"
+            title="Edit specs"
           >
-            <Edit3 className="w-4 h-4 mr-1.5" /> Edit
+            <Edit3 className="w-4 h-4" />
+            <span className="hidden sm:inline ml-1.5">Edit</span>
           </button>
           <button
             onClick={() => {
@@ -240,9 +251,11 @@ export const VehicleDetailsPage: React.FC = () => {
                 toast.success('Motorcycle record deleted.');
               }
             }}
-            className="px-3.5 py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center shadow-md shadow-rose-500/20"
+            className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center shadow-md shadow-rose-500/20"
+            title="Delete record"
           >
-            <Trash2 className="w-4 h-4 mr-1.5" /> Delete
+            <Trash2 className="w-4 h-4" />
+            <span className="hidden sm:inline ml-1.5">Delete</span>
           </button>
         </div>
       </div>

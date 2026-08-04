@@ -6,7 +6,7 @@ import { Modal } from '../components/common/Modal';
 import { ConfirmDialog } from '../components/common/ConfirmDialog';
 import { Pagination } from '../components/common/Pagination';
 import { FollowupPriority, FollowupStatus } from '../types';
-import { CalendarClock, Plus, CheckCircle, Clock, AlertCircle, Trash2 } from 'lucide-react';
+import { CalendarClock, Plus, CheckCircle, Clock, AlertCircle, Trash2, PhoneCall } from 'lucide-react';
 
 export const FollowupsPage: React.FC = () => {
   const { followups, addFollowup, updateFollowupStatus, deleteFollowup, customers, vehicles, staff } = useData();
@@ -158,11 +158,11 @@ export const FollowupsPage: React.FC = () => {
         <SearchBar
           value={searchQuery}
           onChange={setSearchQuery}
-          placeholder="Search follow-ups by customer, bike, staff..."
+          placeholder="Search follow-ups..."
           className="w-full md:w-80"
         />
 
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap items-center justify-center gap-1.5">
           {(['today', 'upcoming', 'overdue', 'completed', 'all'] as const).map(t => (
             <button
               key={t}
@@ -170,7 +170,7 @@ export const FollowupsPage: React.FC = () => {
                 setActiveTab(t);
                 setCurrentPage(1);
               }}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all ${
+              className={`px-2.5 py-1 rounded-xl text-[10px] sm:text-xs font-bold uppercase tracking-wider transition-all ${
                 activeTab === t
                   ? 'bg-sky-600 text-white shadow-sm'
                   : 'text-sky-700 hover:text-sky-900 hover:bg-sky-50'
@@ -182,59 +182,113 @@ export const FollowupsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Data Table */}
-      <div className="overflow-x-auto rounded-2xl bg-white border border-sky-100 shadow-sm transition-colors">
-        <table className="w-full text-left border-collapse text-sm">
-          <thead>
-            <tr className="bg-sky-100/70 border-b border-sky-200 text-sky-900 font-bold uppercase text-[11px] tracking-wider">
-              <th className="py-3.5 px-4">Customer Details</th>
-              <th className="py-3.5 px-4">Interested Bike</th>
-              <th className="py-3.5 px-4">Assigned Staff</th>
-              <th className="py-3.5 px-4">Date & Time</th>
-              <th className="py-3.5 px-4">Priority</th>
-              <th className="py-3.5 px-4">Status</th>
-              <th className="py-3.5 px-4 text-right">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-sky-100 text-sky-950">
+      {/* Data Presentation Area */}
+      {paginatedFollowups.length === 0 ? (
+        <div className="p-12 text-center text-slate-500 bg-white rounded-2xl border border-sky-100">
+          No scheduled follow-up tasks match your criteria.
+        </div>
+      ) : (
+        <>
+          {/* Mobile Card List View (Hidden on Desktop) */}
+          <div className="md:hidden divide-y divide-sky-100 bg-white rounded-2xl border border-sky-100 shadow-sm overflow-hidden">
             {paginatedFollowups.map(f => (
-              <tr key={f.id} className="hover:bg-sky-50 transition-colors">
-                <td className="py-3.5 px-4 font-bold text-sky-950">{f.customerName}</td>
-                <td className="py-3.5 px-4 font-semibold text-sky-900">{f.vehicleName}</td>
-                <td className="py-3.5 px-4 text-xs font-semibold text-indigo-700">{f.assignedStaff}</td>
-                <td className="py-3.5 px-4 text-xs font-mono">
-                  <span className="text-sky-950 font-bold block">{f.followupDate}</span>
-                  <span className="text-sky-700">{f.time}</span>
-                </td>
-                <td className="py-3.5 px-4">
-                  <StatusBadge status={f.priority} type="priority" />
-                </td>
-                <td className="py-3.5 px-4">
-                  <StatusBadge status={f.status} type="followup" />
-                </td>
-                <td className="py-3.5 px-4 text-right space-x-1">
-                  {f.status !== 'Completed' && (
+              <div key={f.id} className="flex items-center justify-between p-3.5 gap-3 hover:bg-sky-50/50 transition-colors">
+                <div className="flex items-center space-x-3 min-w-0 flex-1">
+                  <div className="p-2.5 rounded-xl bg-sky-100 dark:bg-slate-700 text-sky-600 dark:text-sky-400 shrink-0">
+                    <PhoneCall className="w-4 h-4" />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-xs font-bold text-slate-900 dark:text-white truncate">{f.customerName}</h4>
+                    <p className="text-[11px] text-slate-600 dark:text-slate-400 truncate mt-0.5">{f.vehicleName}</p>
+                    <p className="text-[10px] text-sky-700 dark:text-sky-400 mt-1">
+                      <span className="font-semibold">{f.followupDate}</span> • <span>{f.time}</span> • <span className="italic">Staff: {f.assignedStaff}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex flex-col items-end gap-1.5 shrink-0 ml-1">
+                  <div className="flex flex-col gap-0.5 items-end">
+                    <StatusBadge status={f.priority} type="priority" />
+                    <StatusBadge status={f.status} type="followup" />
+                  </div>
+                  <div className="flex items-center gap-1">
+                    {f.status !== 'Completed' && (
+                      <button
+                        onClick={() => updateFollowupStatus(f.id, 'Completed')}
+                        className="p-1 rounded-lg bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-200 dark:hover:bg-emerald-900 transition-colors"
+                        title="Mark Completed"
+                      >
+                        <CheckCircle className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                     <button
-                      onClick={() => updateFollowupStatus(f.id, 'Completed')}
-                      className="p-1.5 rounded-lg text-emerald-600 hover:bg-emerald-100 transition-colors"
-                      title="Mark Completed"
+                      onClick={() => setDeleteTargetId(f.id)}
+                      className="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                      title="Delete"
                     >
-                      <CheckCircle className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
-                  )}
-                  <button
-                    onClick={() => setDeleteTargetId(f.id)}
-                    className="p-1.5 rounded-lg text-sky-700 hover:text-rose-600 hover:bg-rose-100 transition-colors"
-                    title="Delete"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </td>
-              </tr>
+                  </div>
+                </div>
+              </div>
             ))}
-          </tbody>
-        </table>
-      </div>
+          </div>
+
+          {/* Desktop Table View (Hidden on Mobile) */}
+          <div className="hidden md:block overflow-x-auto rounded-2xl bg-white border border-sky-100 shadow-sm transition-colors">
+            <table className="w-full text-left border-collapse text-sm">
+              <thead>
+                <tr className="bg-sky-100/70 border-b border-sky-200 text-sky-900 font-bold uppercase text-[11px] tracking-wider">
+                  <th className="py-3.5 px-4">Customer Details</th>
+                  <th className="py-3.5 px-4">Interested Bike</th>
+                  <th className="py-3.5 px-4">Assigned Staff</th>
+                  <th className="py-3.5 px-4">Date & Time</th>
+                  <th className="py-3.5 px-4">Priority</th>
+                  <th className="py-3.5 px-4">Status</th>
+                  <th className="py-3.5 px-4 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-sky-100 text-sky-950">
+                {paginatedFollowups.map(f => (
+                  <tr key={f.id} className="hover:bg-sky-50 transition-colors">
+                    <td className="py-3.5 px-4 font-bold text-sky-950">{f.customerName}</td>
+                    <td className="py-3.5 px-4 font-semibold text-sky-900">{f.vehicleName}</td>
+                    <td className="py-3.5 px-4 text-xs font-semibold text-indigo-700">{f.assignedStaff}</td>
+                    <td className="py-3.5 px-4 text-xs font-mono">
+                      <span className="text-sky-950 font-bold block">{f.followupDate}</span>
+                      <span className="text-sky-700">{f.time}</span>
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <StatusBadge status={f.priority} type="priority" />
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <StatusBadge status={f.status} type="followup" />
+                    </td>
+                    <td className="py-3.5 px-4 text-right space-x-1">
+                      {f.status !== 'Completed' && (
+                        <button
+                          onClick={() => updateFollowupStatus(f.id, 'Completed')}
+                          className="p-1.5 rounded-lg text-emerald-600 hover:bg-emerald-100 transition-colors"
+                          title="Mark Completed"
+                        >
+                          <CheckCircle className="w-4 h-4" />
+                        </button>
+                      )}
+                      <button
+                        onClick={() => setDeleteTargetId(f.id)}
+                        className="p-1.5 rounded-lg text-sky-700 hover:text-rose-600 hover:bg-rose-100 transition-colors"
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
 
       <Pagination
         currentPage={currentPage}
