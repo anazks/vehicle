@@ -98,120 +98,234 @@ export const pdfService = {
 
   // Generate Sales Invoice PDF
   generateInvoicePDF(soldRecord: SoldVehicle, settings: ShowroomSettings): void {
-    const doc = new jsPDF();
+    const doc = new jsPDF({
+      orientation: 'portrait',
+      unit: 'mm',
+      format: 'a4'
+    });
 
-    // Dark Header
-    doc.setFillColor(15, 23, 42);
-    doc.rect(0, 0, 210, 45, 'F');
+    const marginX = 20;
 
+    // Header Banner (Elegant Blue Accent)
+    doc.setFillColor(15, 23, 42); // #0f172a dark slate
+    doc.rect(0, 0, 210, 48, 'F');
+
+    // Accent line at the bottom of header
+    doc.setFillColor(2, 132, 199); // #0284c7 sky-600
+    doc.rect(0, 45, 210, 3, 'F');
+
+    // Showroom Info
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(22);
     doc.setFont('helvetica', 'bold');
-    doc.text(settings.name, 14, 20);
+    doc.text(settings.name.toUpperCase(), marginX, 20);
 
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text(`${settings.phone}  |  ${settings.email}`, 14, 28);
-    doc.text(settings.address, 14, 34);
+    doc.setTextColor(203, 213, 225); // slate-300
+    doc.text(`Phone: ${settings.phone}   |   Email: ${settings.email}`, marginX, 28);
+    doc.text(settings.address, marginX, 34);
 
-    // Invoice Label
-    doc.setFontSize(20);
+    // Invoice Details (Right Side)
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(16);
     doc.setFont('helvetica', 'bold');
-    doc.text('VEHICLE SALES INVOICE', 120, 22);
+    doc.text('SALES INVOICE', 140, 20);
 
-    doc.setFontSize(10);
+    doc.setFontSize(9);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Invoice No: INV-${soldRecord.id.toUpperCase()}`, 120, 30);
-    doc.text(`Date: ${soldRecord.soldAt}`, 120, 36);
+    doc.setTextColor(186, 230, 253); // sky-200
+    doc.text(`Invoice No: INV-${soldRecord.id.toUpperCase().split('-')[1] || soldRecord.id.toUpperCase()}`, 140, 28);
+    doc.text(`Date: ${soldRecord.soldAt}`, 140, 34);
 
-    // Customer & Vehicle Info Grid
-    let currentY = 55;
-
-    doc.setTextColor(15, 23, 42);
-    doc.setFontSize(11);
-    doc.setFont('helvetica', 'bold');
-    doc.text('BUYER DETAILS', 14, currentY);
-    doc.text('VEHICLE DETAILS', 110, currentY);
-
-    doc.setLineWidth(0.5);
-    doc.setDrawColor(226, 232, 240);
-    doc.line(14, currentY + 2, 196, currentY + 2);
-
-    currentY += 8;
-    doc.setFontSize(10);
-    doc.setFont('helvetica', 'normal');
-    doc.setTextColor(51, 65, 85);
-
-    doc.text(`Name: ${soldRecord.customerName}`, 14, currentY);
-    doc.text(`Vehicle: ${soldRecord.vehicleName}`, 110, currentY);
-
-    currentY += 6;
-    doc.text(`Phone: ${soldRecord.customerPhone}`, 14, currentY);
-    doc.text(`Brand: ${soldRecord.brand}`, 110, currentY);
-
-    currentY += 6;
-    doc.text(`Sales Exec: ${soldRecord.salesExecutive}`, 14, currentY);
-    doc.text(`Reg No: ${soldRecord.registrationNumber}`, 110, currentY);
-
-    currentY += 6;
-    doc.text(`Delivery Date: ${soldRecord.deliveryDate}`, 14, currentY);
-    doc.text(`Payment Mode: ${soldRecord.paymentMethod}`, 110, currentY);
-
-    // Payment Table
-    const paymentRows = [
-      ['Vehicle Listing Price', `${settings.currency} ${soldRecord.originalPrice.toLocaleString('en-IN')}`],
-      ['Special Discount Offered', `- ${settings.currency} ${soldRecord.discount.toLocaleString('en-IN')}`],
-      ['Final Sale Price', `${settings.currency} ${soldRecord.salePrice.toLocaleString('en-IN')}`]
+    // Grid details for Buyer & Vehicle
+    const detailsBody = [
+      [`Customer Name:  ${soldRecord.customerName}`, `Bike Name:           ${soldRecord.vehicleName}`],
+      [`Contact Number: ${soldRecord.customerPhone}`, `Brand / Variant:      ${soldRecord.brand}`],
+      [`Sales Agent:       ${soldRecord.salesExecutive}`, `Reg Number:         ${soldRecord.registrationNumber}`],
+      [`Delivery Date:     ${soldRecord.deliveryDate}`, `Payment Structure: ${soldRecord.paymentType === 'Advance' ? 'Advance / Booking' : 'Full Settlement'}`]
     ];
 
     autoTable(doc, {
-      startY: currentY + 12,
-      head: [['Description', 'Amount']],
-      body: paymentRows,
-      theme: 'grid',
-      headStyles: { fillColor: [30, 41, 59], textColor: [255, 255, 255] },
-      styles: { fontSize: 10, cellPadding: 4 }
+      startY: 56,
+      margin: { left: marginX, right: marginX },
+      head: [['CUSTOMER INFORMATION', 'VEHICLE INFORMATION']],
+      body: detailsBody,
+      theme: 'plain',
+      styles: {
+        fontSize: 9,
+        cellPadding: { top: 2, bottom: 2, left: 0, right: 0 },
+        textColor: [51, 65, 85], // slate-700
+        font: 'helvetica'
+      },
+      headStyles: {
+        fontSize: 10,
+        fontStyle: 'bold',
+        textColor: [2, 132, 199], // sky-600
+        cellPadding: { top: 4, bottom: 2, left: 0, right: 0 }
+      },
+      columnStyles: {
+        0: { cellWidth: 'auto' },
+        1: { cellWidth: 'auto' }
+      }
     });
 
-    currentY = (doc as any).lastAutoTable.finalY + 15;
+    let currentY = (doc as any).lastAutoTable.finalY + 8;
 
-    // Total Highlight Box
-    doc.setFillColor(241, 245, 249);
-    doc.rect(14, currentY, 182, 18, 'F');
+    // Divider Line
+    doc.setDrawColor(224, 242, 254); // sky-100
+    doc.setLineWidth(0.4);
+    doc.line(marginX, currentY, 210 - marginX, currentY);
 
-    doc.setFontSize(12);
+    currentY += 6;
+
+    // Section Title
+    doc.setTextColor(15, 23, 42); // slate-900
+    doc.setFontSize(11);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(15, 23, 42);
-    doc.text(`TOTAL AMOUNT PAID:`, 20, currentY + 12);
+    doc.text('SETTLEMENT BREAKDOWN', marginX, currentY);
 
-    doc.setTextColor(37, 99, 235);
-    doc.setFontSize(14);
-    doc.text(`${settings.currency} ${soldRecord.salePrice.toLocaleString('en-IN')}`, 130, currentY + 12);
+    // Payment Itemization Table
+    const paymentRows = [
+      ['Standard Showroom Listed Price', `${settings.currency} ${soldRecord.originalPrice.toLocaleString('en-IN')}`],
+      ['Subtotal Special Discount Offered', `- ${settings.currency} ${soldRecord.discount.toLocaleString('en-IN')}`],
+      ['Agreed Net Sale Price', `${settings.currency} ${soldRecord.salePrice.toLocaleString('en-IN')}`]
+    ];
+
+    if (soldRecord.paymentType === 'Advance') {
+      paymentRows.push(
+        ['Advance Booking Amount Received', `${settings.currency} ${(soldRecord.advanceAmount || 0).toLocaleString('en-IN')}`],
+        ['Balance Outstanding Due Payment', `${settings.currency} ${(soldRecord.balanceAmount || 0).toLocaleString('en-IN')}`]
+      );
+    }
+
+    if (soldRecord.paymentMethod === 'Finance') {
+      paymentRows.push(
+        ['Finance Customer Down Payment Paid', `${settings.currency} ${(soldRecord.downPayment || 0).toLocaleString('en-IN')}`],
+        ['Finance Approved Bank Loan Amount', `${settings.currency} ${(soldRecord.loanAmount || 0).toLocaleString('en-IN')}`],
+        ['Financier / Loan Provider Bank', soldRecord.financeProvider || 'N/A'],
+        ['Loan Tenure & EMI Installment', `EMI: ${settings.currency} ${(soldRecord.emi || 0).toLocaleString('en-IN')} / Month for ${soldRecord.tenureMonths || 0} Months`]
+      );
+    }
+
+    autoTable(doc, {
+      startY: currentY + 4,
+      margin: { left: marginX, right: marginX },
+      head: [['Payment Item Description', 'Amount']],
+      body: paymentRows,
+      theme: 'striped',
+      styles: {
+        fontSize: 9.5,
+        cellPadding: 3.5,
+        textColor: [30, 41, 59], // slate-800
+        font: 'helvetica'
+      },
+      headStyles: {
+        fillColor: [15, 23, 42], // slate-900
+        textColor: [255, 255, 255],
+        fontSize: 10,
+        fontStyle: 'bold'
+      },
+      columnStyles: {
+        0: { cellWidth: 'auto' },
+        1: { halign: 'right', fontStyle: 'bold' }
+      }
+    });
+
+    currentY = (doc as any).lastAutoTable.finalY + 8;
+
+    // Total Settlement Highlight Callout Card
+    doc.setFillColor(248, 250, 252); // slate-50
+    doc.setDrawColor(226, 232, 240); // slate-200
+    doc.rect(marginX, currentY, 210 - (marginX * 2), 22, 'FD');
+
+    // Colored Accent left border for total box
+    let boxColor = [2, 132, 199]; // sky-600 (default)
+    let totalLabel = 'NET TRANSACTION SALE PRICE:';
+    let totalValue = soldRecord.salePrice;
+
+    if (soldRecord.paymentType === 'Advance') {
+      boxColor = [245, 158, 11]; // amber-500
+      totalLabel = 'BOOKING ADVANCE AMOUNT PAID:';
+      totalValue = soldRecord.advanceAmount || 0;
+    } else if (soldRecord.paymentMethod === 'Finance') {
+      boxColor = [147, 51, 234]; // purple-600
+      totalLabel = 'FINANCE DOWN PAYMENT PAID:';
+      totalValue = soldRecord.downPayment || 0;
+    }
+
+    doc.setFillColor(boxColor[0], boxColor[1], boxColor[2]);
+    doc.rect(marginX, currentY, 2, 22, 'F'); // Left accent bar
+
+    // Render Labels inside Callout Card
+    doc.setTextColor(71, 85, 105); // slate-600
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'bold');
+    doc.text(totalLabel, marginX + 6, currentY + 9);
+
+    // Payment status badge text (green "PAID IN FULL" or amber "ADVANCE PAID / DUE")
+    if (soldRecord.paymentType === 'Advance') {
+      doc.setFillColor(254, 243, 199); // amber-100
+      doc.rect(marginX + 6, currentY + 12, 45, 6, 'F');
+      doc.setTextColor(217, 119, 6); // amber-600
+      doc.setFontSize(8);
+      doc.text('BAL DUE: ' + settings.currency + ' ' + (soldRecord.balanceAmount || 0).toLocaleString('en-IN'), marginX + 8, currentY + 16.5);
+    } else {
+      doc.setFillColor(220, 252, 231); // green-100
+      doc.rect(marginX + 6, currentY + 12, 26, 6, 'F');
+      doc.setTextColor(22, 163, 74); // green-600
+      doc.setFontSize(8);
+      doc.text('PAID IN FULL', marginX + 9, currentY + 16.5);
+    }
+
+    // Right side Value
+    doc.setTextColor(boxColor[0], boxColor[1], boxColor[2]);
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text(
+      `${settings.currency} ${totalValue.toLocaleString('en-IN')}`,
+      210 - marginX - 6,
+      currentY + 14,
+      { align: 'right' }
+    );
 
     // Remarks
-    currentY += 28;
+    currentY += 30;
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(15, 23, 42);
-    doc.text('Remarks / Terms:', 14, currentY);
+    doc.text('Remarks & Agreement Terms:', marginX, currentY);
 
-    currentY += 6;
+    currentY += 5;
     doc.setFont('helvetica', 'normal');
-    doc.setTextColor(71, 85, 105);
-    doc.text(soldRecord.remarks || 'Vehicle sold in certified pre-owned condition.', 14, currentY, { maxWidth: 180 });
+    doc.setFontSize(8.5);
+    doc.setTextColor(100, 116, 139); // slate-500
+    const remarksText = soldRecord.remarks || 'This motorcycle listing is registered and sold in certified pre-owned condition under showroom warranties. Transferred ownership and tax registration papers are under process.';
+    doc.text(remarksText, marginX, currentY, { maxWidth: 210 - (marginX * 2), lineHeightFactor: 1.35 });
 
-    // Signatures
-    currentY += 35;
-    doc.setLineWidth(0.5);
-    doc.setDrawColor(203, 213, 225);
-    doc.line(14, currentY, 70, currentY);
-    doc.line(130, currentY, 190, currentY);
+    // Signature Area
+    currentY += 28;
+    doc.setLineWidth(0.3);
+    doc.setDrawColor(203, 213, 225); // slate-300
+    doc.line(marginX, currentY, marginX + 55, currentY);
+    doc.line(210 - marginX - 55, currentY, 210 - marginX, currentY);
 
-    doc.setFontSize(9);
-    doc.setTextColor(100, 116, 139);
-    doc.text('Customer Signature', 22, currentY + 5);
-    doc.text('Authorized Representative', 138, currentY + 5);
+    currentY += 4;
+    doc.setFontSize(8);
+    doc.setTextColor(148, 163, 184); // slate-400
+    doc.text('Customer Authorized Signature', marginX + 4, currentY);
+    doc.text('Store Manager Signature', 210 - marginX - 45, currentY);
 
-    doc.save(`Invoice_${soldRecord.customerName.replace(/\s+/g, '_')}_${soldRecord.id}.pdf`);
+    // Footer Info
+    doc.setFontSize(7.5);
+    doc.setTextColor(148, 163, 184);
+    doc.text(
+      `Generated electronically by AutoMatrix Showroom CRM on ${new Date().toLocaleDateString()} | System Record ID: ${soldRecord.id}`,
+      105,
+      282,
+      { align: 'center' }
+    );
+
+    doc.save(`Invoice_${soldRecord.customerName.replace(/\s+/g, '_')}_${soldRecord.id.toUpperCase().split('-')[1] || soldRecord.id}.pdf`);
   }
 };

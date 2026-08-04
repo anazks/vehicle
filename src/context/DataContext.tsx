@@ -36,7 +36,7 @@ interface DataContextType {
   toggleFavorite: (vehicleId: string) => void;
 
   // Customer Actions
-  addCustomer: (customer: Omit<Customer, 'id' | 'createdAt'>) => void;
+  addCustomer: (customer: Omit<Customer, 'id' | 'createdAt'>) => Customer;
   updateCustomer: (id: string, updated: Partial<Customer>) => void;
   deleteCustomer: (id: string) => void;
 
@@ -186,7 +186,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   // Customer Handlers
-  const addCustomer = (customerData: Omit<Customer, 'id' | 'createdAt'>) => {
+  const addCustomer = (customerData: Omit<Customer, 'id' | 'createdAt'>): Customer => {
     const newCust: Customer = {
       ...customerData,
       id: `cust-${Date.now()}`,
@@ -196,6 +196,7 @@ export const DataProvider: React.FC<{ children: React.ReactNode }> = ({ children
     storageService.addActivity('customer_add', `Registered Customer: ${newCust.name}`);
     setActivities(storageService.getActivities());
     toast.success(`Customer "${newCust.name}" registered.`);
+    return newCust;
   };
 
   const updateCustomer = (id: string, updated: Partial<Customer>) => {

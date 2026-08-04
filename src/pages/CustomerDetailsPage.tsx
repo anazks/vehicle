@@ -1,11 +1,13 @@
 import React from 'react';
 import { useData } from '../context/DataContext';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Phone, Mail, MapPin, Calendar, Clock, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Phone, Mail, MapPin, Calendar, Clock, CheckCircle, Download } from 'lucide-react';
+import { pdfService } from '../services/pdfService';
+import toast from 'react-hot-toast';
 
 export const CustomerDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { customers, followups } = useData();
+  const { customers, followups, soldVehicles, settings } = useData();
   const navigate = useNavigate();
 
   const customer = customers.find(c => c.id === id);
@@ -19,6 +21,7 @@ export const CustomerDetailsPage: React.FC = () => {
   }
 
   const customerFollowups = followups.filter(f => f.customerId === customer.id);
+  const purchasedVehicles = soldVehicles.filter(s => s.customerId === customer.id);
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -75,6 +78,110 @@ export const CustomerDetailsPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Purchased Vehicles Section */}
+      {purchasedVehicles.length > 0 && (
+        <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-sky-100 dark:border-slate-800 space-y-4 shadow-sm">
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider flex items-center">
+            <CheckCircle className="w-4.5 h-4.5 mr-2 text-emerald-600" /> Purchased Vehicles & Invoice Records ({purchasedVehicles.length})
+          </h3>
+
+          <div className="grid grid-cols-1 gap-4">
+            {purchasedVehicles.map(sv => (
+              <div key={sv.id} className="p-5 rounded-2xl bg-emerald-50/20 dark:bg-slate-850/40 border border-emerald-100/40 dark:border-slate-800 space-y-4 text-xs">
+                {/* Vehicle & Price Header */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-emerald-100/30 dark:border-slate-800 pb-3">
+                  <div>
+                    <h4 className="text-sm font-extrabold text-slate-900 dark:text-white">{sv.vehicleName}</h4>
+                    <p className="text-[11px] text-slate-500 font-medium">{sv.brand} • Reg: <span className="font-bold font-mono text-slate-800 dark:text-slate-350">{sv.registrationNumber}</span></p>
+                  </div>
+                  <div className="sm:text-right">
+                    <span className="text-[10px] text-slate-500 block uppercase font-bold">Settled Sale Price</span>
+                    <span className="text-base font-black text-emerald-700 dark:text-emerald-450">₹{sv.salePrice.toLocaleString('en-IN')}</span>
+                  </div>
+                </div>
+
+                {/* Settle Details */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div>
+                    <span className="text-slate-500 block uppercase text-[10px]">Payment Method</span>
+                    <span className="font-bold text-slate-950 dark:text-white">{sv.paymentMethod}</span>
+                  </div>
+                  <div>
+                    <span className="text-slate-500 block uppercase text-[10px]">Structure</span>
+                    <span className="font-bold text-slate-950 dark:text-white">
+                      {sv.paymentType === 'Advance' ? 'Advance Payment' : 'Full Payment'}
+                    </span>
+                  </div>
+                  {sv.paymentType === 'Advance' ? (
+                    <>
+                      <div>
+                        <span className="text-slate-500 block uppercase text-[10px] text-amber-700 font-bold">Advance Paid</span>
+                        <span className="font-extrabold text-amber-700">₹{sv.advanceAmount?.toLocaleString('en-IN')}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block uppercase text-[10px] text-rose-600 font-bold">Balance Due</span>
+                        <span className="font-extrabold text-rose-600">₹{sv.balanceAmount?.toLocaleString('en-IN')}</span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div>
+                        <span className="text-slate-500 block uppercase text-[10px]">Original Price</span>
+                        <span className="font-bold text-slate-550 dark:text-slate-450 line-through">₹{sv.originalPrice.toLocaleString('en-IN')}</span>
+                      </div>
+                      <div>
+                        <span className="text-slate-500 block uppercase text-[10px] text-emerald-600">Discount Given</span>
+                        <span className="font-bold text-emerald-600">₹{sv.discount.toLocaleString('en-IN')}</span>
+                      </div>
+                    </>
+                  )}
+                </div>
+
+                {/* Finance Details if applicable */}
+                {sv.paymentMethod === 'Finance' && (
+                  <div className="p-3.5 bg-purple-55/20 dark:bg-purple-950/20 rounded-xl border border-purple-100/30 dark:border-purple-800/40 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div>
+                      <span className="text-purple-700 dark:text-purple-400 block uppercase text-[9px] font-bold">Finance Provider</span>
+                      <span className="font-bold text-slate-900 dark:text-white">{sv.financeProvider || 'N/A'}</span>
+                    </div>
+                    <div>
+                      <span className="text-purple-700 dark:text-purple-400 block uppercase text-[9px] font-bold">Down Payment</span>
+                      <span className="font-bold text-slate-900 dark:text-white">₹{sv.downPayment?.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div>
+                      <span className="text-purple-700 dark:text-purple-400 block uppercase text-[9px] font-bold">Loan Amount</span>
+                      <span className="font-bold text-slate-900 dark:text-white">₹{sv.loanAmount?.toLocaleString('en-IN')}</span>
+                    </div>
+                    <div>
+                      <span className="text-purple-700 dark:text-purple-400 block uppercase text-[9px] font-bold">EMI / Tenure</span>
+                      <span className="font-bold text-slate-900 dark:text-white">₹{sv.emi?.toLocaleString('en-IN')} / {sv.tenureMonths} mos</span>
+                    </div>
+                  </div>
+                )}
+
+                {/* Logistics */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-3 border-t border-emerald-100/20 dark:border-slate-800 text-[11px] text-slate-500">
+                  <div className="flex flex-wrap gap-x-4 gap-y-1">
+                    <span>Delivered On: <strong className="text-slate-700 dark:text-slate-350">{sv.deliveryDate}</strong></span>
+                    <span>Executive: <strong className="text-slate-700 dark:text-slate-350">{sv.salesExecutive}</strong></span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      pdfService.generateInvoicePDF(sv, settings);
+                      toast.success(`Invoice PDF downloaded for ${sv.customerName}`);
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs inline-flex items-center self-start sm:self-center shadow-md shadow-purple-500/10 active:scale-95 transition-all"
+                  >
+                    <Download className="w-3.5 h-3.5 mr-1.5" /> Download Sales Invoice
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Engagement Timeline */}
       <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-sky-100 dark:border-slate-800 space-y-4 shadow-sm">

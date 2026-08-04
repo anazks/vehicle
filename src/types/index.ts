@@ -96,6 +96,14 @@ export interface SoldVehicle {
   remarks: string;
   branchId?: string;
   soldAt: string;
+  paymentType?: 'Full' | 'Advance';
+  advanceAmount?: number;
+  balanceAmount?: number;
+  financeProvider?: string;
+  loanAmount?: number;
+  downPayment?: number;
+  tenureMonths?: number;
+  emi?: number;
 }
 
 export type StaffRole = 'Admin' | 'Manager' | 'Sales Executive';
