@@ -5,7 +5,7 @@ import { Navbar } from './Navbar';
 import { MobileBottomNav } from './MobileBottomNav';
 import { useAuth } from '../../context/AuthContext';
 
-export const Layout: React.FC = () => {
+export const Layout: React.FC<{ children?: React.ReactNode }> = ({ children }) => {
   const { isAdmin } = useAuth();
 
   return (
@@ -21,7 +21,7 @@ export const Layout: React.FC = () => {
         {/* Page Content Viewport */}
         <main className={`flex-1 overflow-y-auto p-4 md:p-6 lg:p-8 ${isAdmin ? 'pb-4' : 'pb-20'} md:pb-8 bg-sky-50/30`}>
           <div className="max-w-7xl mx-auto space-y-6">
-            <Outlet />
+            {children || <Outlet />}
           </div>
         </main>
 

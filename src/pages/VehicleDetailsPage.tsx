@@ -3,6 +3,7 @@ import { useData } from '../context/DataContext';
 import { useParams, useNavigate } from 'react-router-dom';
 import { StatusBadge } from '../components/common/StatusBadge';
 import { QRCodeModal } from '../components/vehicles/QRCodeModal';
+import { CustomerInquiryModal } from '../components/vehicles/CustomerInquiryModal';
 import { pdfService } from '../services/pdfService';
 import { useAuth } from '../context/AuthContext';
 import { Modal } from '../components/common/Modal';
@@ -21,7 +22,10 @@ import {
   Edit3,
   Trash2,
   BadgeCheck,
-  DollarSign
+  Phone,
+  MessageCircle,
+  Building2,
+  Sparkles
 } from 'lucide-react';
 import toast from 'react-hot-toast';
 
@@ -29,6 +33,7 @@ export const VehicleDetailsPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const {
     vehicles,
+    branches,
     settings,
     favorites,
     toggleFavorite,
@@ -37,13 +42,14 @@ export const VehicleDetailsPage: React.FC = () => {
     addCustomer,
     markVehicleSold
   } = useData();
-  const { user } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
   const vehicle = vehicles.find(v => v.id === id);
 
   const [activeImage, setActiveImage] = useState(vehicle?.coverImage || '');
   const [isQRModalOpen, setIsQRModalOpen] = useState(false);
+  const [isInquiryModalOpen, setIsInquiryModalOpen] = useState(false);
 
   // Mark as Sold Form States
   const [isMarkSoldOpen, setIsMarkSoldOpen] = useState(false);
@@ -72,6 +78,11 @@ export const VehicleDetailsPage: React.FC = () => {
   
   const [salesExecutive, setSalesExecutive] = useState(user?.name || '');
   const [remarks, setRemarks] = useState('Sold with certified checklist and warranty.');
+
+  // Branch info
+  const vehicleBranch = branches.find(b => b.id === vehicle?.branchId);
+  const branchPhone = vehicleBranch?.phone || settings.phone || '+91 99000 11100';
+  const cleanPhone = branchPhone.replace(/[^0-9]/g, '');
 
   // Set default selected customer
   useEffect(() => {
@@ -195,12 +206,19 @@ export const VehicleDetailsPage: React.FC = () => {
     <div className="space-y-6 max-w-6xl mx-auto">
       {/* Navigation Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <button
-          onClick={() => navigate('/vehicles')}
-          className="flex items-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-sky-700 dark:hover:text-sky-400 transition-colors self-start"
-        >
-          <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Motorcycle Inventory
-        </button>
+        {isAuthenticated ? (
+          <button
+            onClick={() => navigate('/vehicles')}
+            className="flex items-center text-xs font-bold text-slate-600 dark:text-slate-400 hover:text-sky-700 dark:hover:text-sky-400 transition-colors self-start"
+          >
+            <ArrowLeft className="w-4 h-4 mr-1.5" /> Back to Motorcycle Inventory
+          </button>
+        ) : (
+          <div className="flex items-center space-x-2 text-xs font-bold text-sky-400 self-start">
+            <Sparkles className="w-4 h-4 text-sky-400" />
+            <span>Digital Showroom Specs Sheet & Brochure</span>
+          </div>
+        )}
 
         <div className="flex flex-wrap items-center gap-2">
           <button
@@ -227,36 +245,53 @@ export const VehicleDetailsPage: React.FC = () => {
             <Download className="w-4 h-4" />
             <span className="hidden sm:inline ml-1.5">Download PDF</span>
           </button>
-          <button
-            onClick={() => setIsQRModalOpen(true)}
-            className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center shadow-md shadow-purple-500/20"
-            title="QR Pass"
-          >
-            <QrCode className="w-4 h-4" />
-            <span className="hidden sm:inline ml-1.5">QR Pass</span>
-          </button>
-          <button
-            onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)}
-            className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center shadow-md shadow-sky-500/20"
-            title="Edit specs"
-          >
-            <Edit3 className="w-4 h-4" />
-            <span className="hidden sm:inline ml-1.5">Edit</span>
-          </button>
-          <button
-            onClick={() => {
-              if (window.confirm("Are you sure you want to delete this vehicle?")) {
-                deleteVehicle(vehicle.id);
-                navigate('/vehicles');
-                toast.success('Motorcycle record deleted.');
-              }
-            }}
-            className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center shadow-md shadow-rose-500/20"
-            title="Delete record"
-          >
-            <Trash2 className="w-4 h-4" />
-            <span className="hidden sm:inline ml-1.5">Delete</span>
-          </button>
+
+          {/* Guest Customer Primary CTA */}
+          {!isAuthenticated && (
+            <button
+              onClick={() => setIsInquiryModalOpen(true)}
+              className="p-2 sm:px-4 sm:py-2 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-extrabold text-xs flex items-center shadow-lg shadow-sky-500/25 active:scale-95 transition-all"
+            >
+              <PhoneCall className="w-4 h-4 mr-1.5" />
+              <span>Book Test Ride</span>
+            </button>
+          )}
+
+          {/* Authenticated Staff Only Actions */}
+          {isAuthenticated && (
+            <>
+              <button
+                onClick={() => setIsQRModalOpen(true)}
+                className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs flex items-center shadow-md shadow-purple-500/20"
+                title="QR Pass"
+              >
+                <QrCode className="w-4 h-4" />
+                <span className="hidden sm:inline ml-1.5">QR Pass</span>
+              </button>
+              <button
+                onClick={() => navigate(`/vehicles/edit/${vehicle.id}`)}
+                className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs flex items-center shadow-md shadow-sky-500/20"
+                title="Edit specs"
+              >
+                <Edit3 className="w-4 h-4" />
+                <span className="hidden sm:inline ml-1.5">Edit</span>
+              </button>
+              <button
+                onClick={() => {
+                  if (window.confirm("Are you sure you want to delete this vehicle?")) {
+                    deleteVehicle(vehicle.id);
+                    navigate('/vehicles');
+                    toast.success('Motorcycle record deleted.');
+                  }
+                }}
+                className="p-2 sm:px-3.5 sm:py-2 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs flex items-center shadow-md shadow-rose-500/20"
+                title="Delete record"
+              >
+                <Trash2 className="w-4 h-4" />
+                <span className="hidden sm:inline ml-1.5">Delete</span>
+              </button>
+            </>
+          )}
         </div>
       </div>
 
@@ -309,6 +344,17 @@ export const VehicleDetailsPage: React.FC = () => {
               )}
             </div>
 
+            {/* Showroom location tag for guest user */}
+            {vehicleBranch && (
+              <div className="mt-3 p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800/60 text-xs flex items-start space-x-2 text-slate-600 dark:text-slate-300">
+                <Building2 className="w-4 h-4 text-sky-500 shrink-0 mt-0.5" />
+                <div>
+                  <span className="font-bold text-slate-900 dark:text-white block">{vehicleBranch.name}</span>
+                  <span className="text-[11px] text-slate-500 dark:text-slate-400">{vehicleBranch.address}</span>
+                </div>
+              </div>
+            )}
+
             {/* Quick Specs Grid */}
             <div className="grid grid-cols-2 gap-3 mt-4 text-xs">
               <div className="p-3 rounded-xl bg-sky-50/60 dark:bg-slate-800/60 border border-sky-100 dark:border-slate-700 flex items-center space-x-2.5">
@@ -346,29 +392,64 @@ export const VehicleDetailsPage: React.FC = () => {
           </div>
 
           <div className="pt-2 border-t border-sky-100 dark:border-slate-800 space-y-2">
-            {vehicle.status !== 'Sold' ? (
-              <>
+            {isAuthenticated ? (
+              vehicle.status !== 'Sold' ? (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setIsMarkSoldOpen(true)}
+                    className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md shadow-emerald-500/20 transition-all active:scale-[0.98]"
+                  >
+                    <BadgeCheck className="w-4.5 h-4.5" />
+                    <span>Mark Motorcycle as Sold</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => navigate('/followups')}
+                    className="w-full py-3 rounded-xl bg-sky-50 dark:bg-slate-850 hover:bg-sky-100 dark:hover:bg-slate-800 text-sky-700 dark:text-sky-300 border border-sky-200/50 dark:border-slate-700 font-bold text-xs flex items-center justify-center space-x-2 transition-colors"
+                  >
+                    <PhoneCall className="w-4 h-4" />
+                    <span>Schedule Test Ride / Follow-Up</span>
+                  </button>
+                </>
+              ) : (
+                <div className="w-full py-4 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 font-bold text-xs text-center border border-emerald-200 dark:border-emerald-900/30 flex flex-col items-center justify-center space-y-1">
+                  <span className="flex items-center"><BadgeCheck className="w-4.5 h-4.5 mr-1 text-emerald-600" /> Motorcycle Sold & Delivered!</span>
+                  <span className="text-[10px] text-emerald-600 font-medium">This record is locked in inventory archive.</span>
+                </div>
+              )
+            ) : (
+              /* Public Unauthenticated Customer CTA buttons */
+              <div className="space-y-2">
                 <button
                   type="button"
-                  onClick={() => setIsMarkSoldOpen(true)}
-                  className="w-full py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center space-x-2 shadow-md shadow-emerald-500/20 transition-all active:scale-[0.98]"
-                >
-                  <BadgeCheck className="w-4.5 h-4.5" />
-                  <span>Mark Motorcycle as Sold</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => navigate('/followups')}
-                  className="w-full py-3 rounded-xl bg-sky-50 dark:bg-slate-850 hover:bg-sky-100 dark:hover:bg-slate-800 text-sky-700 dark:text-sky-300 border border-sky-200/50 dark:border-slate-700 font-bold text-xs flex items-center justify-center space-x-2 transition-colors"
+                  onClick={() => setIsInquiryModalOpen(true)}
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-sky-500 to-blue-600 hover:from-sky-400 hover:to-blue-500 text-white font-black text-xs flex items-center justify-center space-x-2 shadow-lg shadow-sky-500/25 transition-all active:scale-[0.98]"
                 >
                   <PhoneCall className="w-4 h-4" />
-                  <span>Schedule Test Ride / Follow-Up</span>
+                  <span>Book Test Ride / Request Call</span>
                 </button>
-              </>
-            ) : (
-              <div className="w-full py-4 px-3 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 text-emerald-800 dark:text-emerald-300 font-bold text-xs text-center border border-emerald-200 dark:border-emerald-900/30 flex flex-col items-center justify-center space-y-1">
-                <span className="flex items-center"><BadgeCheck className="w-4.5 h-4.5 mr-1 text-emerald-600" /> Motorcycle Sold & Delivered!</span>
-                <span className="text-[10px] text-emerald-600 font-medium">This record is locked in inventory archive.</span>
+                
+                <div className="grid grid-cols-2 gap-2">
+                  <a
+                    href={`tel:${branchPhone}`}
+                    className="py-2.5 px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-400 font-bold text-xs flex items-center justify-center space-x-1.5 border border-slate-700 transition-colors"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    <span>Call Showroom</span>
+                  </a>
+                  {cleanPhone && (
+                    <a
+                      href={`https://wa.me/${cleanPhone}?text=Hi,%20I%20scanned%20the%20QR%20code%20for%20${encodeURIComponent(vehicle.name)}%20(${vehicle.registrationNumber}).%20I%20am%20interested.`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="py-2.5 px-3 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 text-white font-bold text-xs flex items-center justify-center space-x-1.5 transition-colors"
+                    >
+                      <MessageCircle className="w-3.5 h-3.5" />
+                      <span>WhatsApp</span>
+                    </a>
+                  )}
+                </div>
               </div>
             )}
           </div>
@@ -409,6 +490,7 @@ export const VehicleDetailsPage: React.FC = () => {
       </div>
 
       <QRCodeModal isOpen={isQRModalOpen} onClose={() => setIsQRModalOpen(false)} vehicle={vehicle} />
+      <CustomerInquiryModal isOpen={isInquiryModalOpen} onClose={() => setIsInquiryModalOpen(false)} vehicle={vehicle} />
 
       {/* Mark Sold Modal */}
       <Modal

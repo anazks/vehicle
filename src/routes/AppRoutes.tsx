@@ -2,6 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { Layout } from '../components/layout/Layout';
+import { PublicLayout } from '../components/layout/PublicLayout';
 
 import { LoginPage } from '../pages/LoginPage';
 import { DashboardPage } from '../pages/DashboardPage';
@@ -30,10 +31,31 @@ const RootRedirect: React.FC = () => {
   return isAdmin ? <Navigate to="/dashboard" replace /> : <Navigate to="/vehicles" replace />;
 };
 
+const VehicleDetailsRoute: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
+  if (isAuthenticated) {
+    return (
+      <Layout>
+        <VehicleDetailsPage />
+      </Layout>
+    );
+  }
+
+  return (
+    <PublicLayout>
+      <VehicleDetailsPage />
+    </PublicLayout>
+  );
+};
+
 export const AppRoutes: React.FC = () => {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+
+      {/* Publicly accessible route for QR code scanning & guest viewers */}
+      <Route path="/vehicles/:id" element={<VehicleDetailsRoute />} />
 
       <Route
         element={
@@ -49,7 +71,6 @@ export const AppRoutes: React.FC = () => {
         <Route path="/add-vehicle" element={<AddVehiclePage />} />
         <Route path="/vehicles/add" element={<AddVehiclePage />} />
         <Route path="/vehicles/edit/:id" element={<EditVehiclePage />} />
-        <Route path="/vehicles/:id" element={<VehicleDetailsPage />} />
         <Route path="/bulk-upload" element={<BulkUploadPage />} />
         <Route path="/customers" element={<CustomersPage />} />
         <Route path="/customers/:id" element={<CustomerDetailsPage />} />
@@ -63,3 +84,4 @@ export const AppRoutes: React.FC = () => {
     </Routes>
   );
 };
+
