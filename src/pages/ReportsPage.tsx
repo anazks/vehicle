@@ -39,7 +39,7 @@ export const ReportsPage: React.FC = () => {
       </div>
 
       {/* 3 Metric Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-sky-100 dark:border-slate-800 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Live Inventory Valuation</span>

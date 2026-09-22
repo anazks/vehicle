@@ -39,8 +39,8 @@ export const VehicleTable: React.FC<VehicleTableProps> = ({
             <th className="hidden md:table-cell py-3.5 px-4">Registration</th>
             <th className="hidden md:table-cell py-3.5 px-4">Fuel & Trans</th>
             <th className="hidden md:table-cell py-3.5 px-4">KM & Owner</th>
-            <th className="hidden md:table-cell py-3.5 px-4">Offer Price</th>
-            <th className="hidden md:table-cell py-3.5 px-4 text-right">Action</th>
+            <th className="hidden sm:table-cell py-3.5 px-4 font-bold">Offer Price</th>
+            <th className="py-3.5 px-3 md:px-4 text-right">Action</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-sky-100 text-sky-950">
@@ -76,7 +76,7 @@ export const VehicleTable: React.FC<VehicleTableProps> = ({
                         {v.name}
                       </span>
                       <span className="text-[11px] font-semibold text-sky-700 block truncate">{v.brand}</span>
-                      <span className="md:hidden text-[11px] font-black text-sky-600">₹{v.offerPrice.toLocaleString('en-IN')}</span>
+                      <span className="sm:hidden text-[11px] font-black text-sky-600">₹{v.offerPrice.toLocaleString('en-IN')}</span>
                     </div>
                   </div>
                 </td>
@@ -101,7 +101,7 @@ export const VehicleTable: React.FC<VehicleTableProps> = ({
                 </td>
 
                 {/* Desktop-Only Columns */}
-                <td className="hidden md:table-cell py-3.5 px-4 text-xs font-mono font-bold text-sky-900">
+                <td className="hidden lg:table-cell py-3.5 px-4 text-xs font-mono font-bold text-sky-900">
                   {v.registrationNumber}
                 </td>
 
@@ -115,12 +115,12 @@ export const VehicleTable: React.FC<VehicleTableProps> = ({
                   <span className="text-sky-700">{v.owner}</span>
                 </td>
 
-                <td className="hidden md:table-cell py-3.5 px-4 text-xs font-extrabold text-sky-600 text-sm">
+                <td className="hidden sm:table-cell py-3.5 px-4 text-xs font-extrabold text-sky-600 text-sm">
                   ₹{v.offerPrice.toLocaleString('en-IN')}
                 </td>
 
-                {/* Prominent Desktop-Only View Button */}
-                <td className="hidden md:table-cell py-3.5 px-4 text-right" onClick={e => e.stopPropagation()}>
+                {/* Prominent View Button */}
+                <td className="py-3.5 px-3 md:px-4 text-right" onClick={e => e.stopPropagation()}>
                   <div className="flex items-center justify-end space-x-1">
                     <button
                       onClick={() => navigate(`/vehicles/${v.id}`)}

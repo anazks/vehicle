@@ -250,10 +250,10 @@ export const SoldVehiclesPage: React.FC = () => {
             <tr className="bg-sky-100/70 border-b border-sky-200 text-sky-900 font-bold uppercase text-[11px] tracking-wider">
               <th className="py-3.5 px-4">Sold Bike</th>
               <th className="py-3.5 px-4">Buyer Customer</th>
-              <th className="hidden md:table-cell py-3.5 px-4">Sale Price / Discount</th>
-              <th className="hidden md:table-cell py-3.5 px-4">Payment Method</th>
-              <th className="hidden md:table-cell py-3.5 px-4">Delivery Date</th>
-              <th className="hidden md:table-cell py-3.5 px-4 text-right">Invoice</th>
+              <th className="hidden sm:table-cell py-3.5 px-4">Sale Price / Discount</th>
+              <th className="hidden lg:table-cell py-3.5 px-4">Payment Method</th>
+              <th className="hidden sm:table-cell py-3.5 px-4">Delivery Date</th>
+              <th className="py-3.5 px-4 text-right">Invoice</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-sky-100 text-sky-950">
@@ -273,22 +273,22 @@ export const SoldVehiclesPage: React.FC = () => {
                   <span className="text-sky-700">{s.customerPhone}</span>
                 </td>
 
-                <td className="hidden md:table-cell py-3.5 px-4 text-xs">
+                <td className="hidden sm:table-cell py-3.5 px-4 text-xs">
                   <span className="font-extrabold text-emerald-700 block">₹{s.salePrice.toLocaleString('en-IN')}</span>
                   {s.discount > 0 && (
                     <span className="text-[10px] text-rose-600 font-semibold">Discount: ₹{s.discount.toLocaleString('en-IN')}</span>
                   )}
                 </td>
 
-                <td className="hidden md:table-cell py-3.5 px-4 text-xs font-semibold text-sky-700">
+                <td className="hidden lg:table-cell py-3.5 px-4 text-xs font-semibold text-sky-700">
                   {s.paymentMethod}
                 </td>
 
-                <td className="hidden md:table-cell py-3.5 px-4 text-xs font-mono text-sky-800">
+                <td className="hidden sm:table-cell py-3.5 px-4 text-xs font-mono text-sky-800">
                   {s.deliveryDate}
                 </td>
 
-                <td className="hidden md:table-cell py-3.5 px-4 text-right" onClick={e => e.stopPropagation()}>
+                <td className="py-3.5 px-4 text-right" onClick={e => e.stopPropagation()}>
                   <button
                     onClick={() => handleDownloadInvoice(s)}
                     className="px-3 py-1.5 rounded-xl bg-purple-50 hover:bg-purple-100 text-purple-700 font-bold text-xs inline-flex items-center border border-purple-200 transition-all shadow-xs"

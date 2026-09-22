@@ -171,7 +171,7 @@ export const DashboardPage: React.FC = () => {
           <span className="text-[10px] font-bold bg-sky-500/20 text-sky-300 px-2 py-0.5 rounded border border-sky-500/30">Live Analytics</span>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
           {/* Card 1: Most Moving Vehicle */}
           <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-2">
             <span className="text-[10px] text-sky-300 font-bold uppercase tracking-wider block">Fastest Moving Bike</span>
@@ -197,7 +197,7 @@ export const DashboardPage: React.FC = () => {
           </div>
 
           {/* Card 3: Actionable Sales Idea */}
-          <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-2">
+          <div className="bg-white/5 rounded-2xl p-4 border border-white/10 space-y-2 sm:col-span-2 lg:col-span-1">
             <span className="text-[10px] text-emerald-300 font-bold uppercase tracking-wider block">Sales Strategy Idea</span>
             <span className="text-[11px] font-bold text-white block mt-0.5">Finance Package Push</span>
             <p className="text-[11px] text-slate-300 leading-relaxed">
@@ -208,26 +208,26 @@ export const DashboardPage: React.FC = () => {
       </div>
 
       {/* Visual Analytics Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-8">
+      <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <div className="md:col-span-12 lg:col-span-8">
           <SalesTrendChart />
         </div>
 
-        <div className="lg:col-span-4">
+        <div className="md:col-span-12 lg:col-span-4">
           <BrandChart vehicles={filteredVehicles} />
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6">
+        <div className="sm:col-span-1 lg:col-span-4">
           <FuelTypeChart vehicles={filteredVehicles} />
         </div>
 
-        <div className="lg:col-span-4">
+        <div className="sm:col-span-1 lg:col-span-4">
           <RecentActivityFeed activities={activities} />
         </div>
 
-        <div className="lg:col-span-4">
+        <div className="sm:col-span-2 lg:col-span-4">
           <FollowupWidget followups={followups} onComplete={id => updateFollowupStatus(id, 'Completed')} />
         </div>
       </div>

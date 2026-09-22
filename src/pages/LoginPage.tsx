@@ -96,7 +96,7 @@ export const LoginPage: React.FC = () => {
         {/* Footer Brand Credit */}
         <div className="relative z-10 text-xs text-slate-500 font-medium">
           <span>A Product of </span>
-          <span className="text-slate-300 font-extrabold tracking-wider">SUNSERK</span>
+          <span className="text-slate-300 font-extrabold tracking-wider">Byteboot</span>
         </div>
       </div>
 
@@ -204,7 +204,7 @@ export const LoginPage: React.FC = () => {
           {/* Mobile Footer Credit */}
           <div className="md:hidden text-center text-[10px] text-slate-400 font-medium">
             <span>A Product of </span>
-            <span className="text-slate-600 font-extrabold tracking-wider">SUNSERK</span>
+            <span className="text-slate-600 font-extrabold tracking-wider">Byteboot</span>
           </div>
         </motion.div>
       </div>

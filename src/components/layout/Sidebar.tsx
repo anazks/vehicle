@@ -21,10 +21,21 @@ import {
 import { motion } from 'framer-motion';
 
 export const Sidebar: React.FC = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = React.useState(() => window.innerWidth < 1024);
   const { logout, user, isAdmin } = useAuth();
   const { settings, followups, vehicles } = useData();
   const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setCollapsed(true);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const pendingFollowupsCount = followups.filter(f => f.status === 'Pending').length;
   const availableVehiclesCount = vehicles.filter(v => v.status === 'Available').length;
